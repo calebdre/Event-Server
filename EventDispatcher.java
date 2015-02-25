@@ -1,32 +1,56 @@
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Scanner;
-
+import java.util.List;
 
 public class EventDispatcher {
 	
-	private static HashMap<String, EventCommand> events = new HashMap<String, EventCommand>();
+	// this will store event names and the object that the event comes from. 
+	// The name will be mapped to execute a method on the object of the same name.
+	private static HashMap<String, Object> events = new HashMap<String, Object>();
 
-	public static void add(String event, EventCommand func){
-		events.put(event, func);
+	public void add(String event, Object ob){
+		events.put(event, ob);
 	}
 	
-	public void fire(String event) throws EventDoesNotExistException{
-		EventCommand c = events.get(event);
-		if(c == null){ 
-			throw new EventDoesNotExistException(); 
+	public void add(EventHub hub){
+		for(Method m: hub.getClass().getMethods()){
+			this.add(m.getName(), hub.getClass());
 		}
+	}
+	
+	// the args object would be the identifier for the client, and then the socket
+	public void fire(String event, List<Object> args) throws EventDoesNotExistException{
+		Object c = events.get(event);
+		if(c == null) throw new EventDoesNotExistException(); 
 		
-		c.execute();
-		this.remove(event);
+		try {
+			// the second parameter is to identify methods with the same name
+			Method m = c.getClass().getMethod(event,(Class<?>) null);
+			m.invoke(c, args);
+			
+			this.remove(event);
+			
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void remove(String event){
 		events.remove(event);
 	}
 	
-	public class EventDoesNotExistException extends Exception{
-		public EventDoesNotExistException(){
-			super("The event you tried to trigger does not exist.");
-		}
-	}
 }
