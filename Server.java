@@ -19,23 +19,19 @@ public class Server{
 	        System.exit(1);
 	    }
 	
-	    Socket clientSocket = null;
+	    
 	    // keep a list of connected clients.
 	    // http://stackoverflow.com/questions/13115784/sending-a-message-to-all-running-client-threads
-	    ConnectedClients clients = new ConnectedClients();
-	    while(true){
-			clientSocket = serverSocket.accept();		
-			clients.add(clientSocket);
-	    }
 	    
-	    try {
-	        
-	        
-	        clientSocket.close();
-		    serverSocket.close();
-	    } catch (IOException e) {
-	        System.err.println("Accept failed.");
-	        System.exit(1);
+	    while(true){
+			try {
+				Socket clientSocket = serverSocket.accept();
+				eventDispatcher.fire("clientConnected", clientSocket);
+				new Thread(new ServerWorker(clientSocket, eventDispatcher)).start();
+			} catch (IOException | EventDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    }
 	}
 }

@@ -19,24 +19,32 @@ public class EventDispatcher {
 		}
 	}
 	
-	// the args object would be the identifier for the client, and then the socket
+	public void remove(String event){
+		events.remove(event);
+	}
+	
+	public void fire(String event, Object arg) throws EventDoesNotExistException{
+		Object c = events.get(event);
+		if(c == null) throw new EventDoesNotExistException();
+		
+		invoke(event, c.getClass(), arg);
+		remove(event);
+	}
+	
 	public void fire(String event, List<Object> args) throws EventDoesNotExistException{
 		Object c = events.get(event);
 		if(c == null) throw new EventDoesNotExistException(); 
 		
+		invoke(event, c.getClass(), args);
+		
+		remove(event);
+	}
+	
+	public void invoke(String method, Class<?> cls, Object arg){
 		try {
-			// the second parameter is to identify methods with the same name
-			Method m = c.getClass().getMethod(event,(Class<?>) null);
-			m.invoke(c, args);
 			
-			this.remove(event);
+			cls.getMethod(method, (Class<?>) null).invoke(cls, arg);
 			
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,11 +54,35 @@ public class EventDispatcher {
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
-	public void remove(String event){
-		events.remove(event);
+	public void invoke(String method, Class<?> cls, List<Object> args){
+		try {
+			
+			cls.getMethod(method, (Class<?>) null).invoke(cls, args);
+			
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
 }
