@@ -7,11 +7,12 @@ public class ConnectedClients implements EventHub{
 	
 	private List<Socket> clients;
 	
-	private ConnectedClients(){
+	ConnectedClients(){
 		clients = new ArrayList<Socket>();  
 	}
 	
 	public void clientConnected(Socket client){
-		
+		clients.add(client);
+		System.out.println("Client " + client.getRemoteSocketAddress().toString() + " has connected");
 	}
 }

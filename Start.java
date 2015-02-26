@@ -6,7 +6,10 @@ public class Start {
 		
 		//
 		// add events here
+		ConnectedClients connectedClients = new ConnectedClients();
 		//
+		
+		e.add(connectedClients);
 		
 		Server s = new Server(e);
 		s.serve();
