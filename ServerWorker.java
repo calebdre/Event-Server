@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerWorker implements Runnable{
 	//THIS IS STILL THE SERVER
@@ -19,10 +16,8 @@ public class ServerWorker implements Runnable{
 	@Override
 	public void run() {
 			BufferedReader inputFromClient = null;
-			PrintWriter outputToClient = null;
 			try {
 				inputFromClient = new BufferedReader(new InputStreamReader(clientSock.getInputStream()));
-				outputToClient = new PrintWriter(clientSock.getOutputStream(), true);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -34,28 +29,12 @@ public class ServerWorker implements Runnable{
 		    
 		    try {
 				while ((inputLine = inputFromClient.readLine()) != null) {
-				     String[] p = inputLine.split("\\s");
+					// the string the client sends needs to be in format: event "param string info"
+					// example: communicate "Hello world"
+				     String event = inputLine.split("\\s")[0];
+				     String param = inputLine.split("\"")[1];
 				     
-				     if(p.length > 2){
-				    	 outputToClient.print("The command had too many arguments");
-				    	 continue;
-				     }
-				     
-				     String identifier = p[0];
-				     String event = p[1];
-				     
-				     List<Object> args = new ArrayList<Object>();
-				     args.add(identifier);
-				     args.add(clientSock);
-				     
-					try {
-						this.eventDispatcher.fire(event, args);
-					} catch (EventDoesNotExistException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				
-				     
+					this.eventDispatcher.fire(event, clientSock, param);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

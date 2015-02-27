@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 public class Client{ 
 	
@@ -13,7 +14,15 @@ public class Client{
 			PrintWriter outToServer = new PrintWriter(sock.getOutputStream(), true);
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			
+			Scanner userInputScanner = new Scanner(System.in);
 			
+			System.out.println("Type in an event to trigger");
+			
+			while(true){
+				String userInput = userInputScanner.nextLine();
+				outToServer.println(userInput);
+				System.out.println(inFromServer.readLine());
+			}
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block

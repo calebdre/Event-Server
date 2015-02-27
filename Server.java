@@ -28,7 +28,7 @@ public class Server{
 				Socket clientSocket = serverSocket.accept();
 				eventDispatcher.fire("clientConnected", clientSocket);
 				new Thread(new ServerWorker(clientSocket, eventDispatcher)).start();
-			} catch (IOException | EventDoesNotExistException e) {
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
