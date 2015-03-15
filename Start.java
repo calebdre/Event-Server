@@ -1,4 +1,6 @@
 
+
+
 public class Start {
 
 	public static void main(String[] args) {
@@ -6,7 +8,7 @@ public class Start {
 		
 		//
 		// add events here
-		ConnectedClients connectedClients = new ConnectedClients();
+		ConnectedClientsEventHub connectedClients = new ConnectedClientsEventHub();
 		//
 		
 		e.add(connectedClients);

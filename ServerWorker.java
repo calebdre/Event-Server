@@ -24,21 +24,24 @@ public class ServerWorker implements Runnable{
 			}
 		    
 		    String inputLine = "";
-		     
-		    // http://stackoverflow.com/questions/10777678/send-message-from-a-basic-server-to-a-specific-client
 		    
-		    try {
-				while ((inputLine = inputFromClient.readLine()) != null) {
-					// the string the client sends needs to be in format: event "param string info"
-					// example: communicate "Hello world"
-				     String event = inputLine.split("\\s")[0];
-				     String param = inputLine.split("\"")[1];
-				     
-					this.eventDispatcher.fire(event, clientSock, param);
+		    while (true) {
+		    	try {
+		    		if(inputFromClient.ready()){
+		    			inputLine = inputFromClient.readLine();
+		    			// the string the client sends needs to be in format: event "param string info"
+						// example: communicate "Hello world"
+					     String event = inputLine.split("\\s")[0];
+					     String param = inputLine.split("\"")[1];
+					     
+						this.eventDispatcher.fire(event, clientSock, param);
+		    		}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				
 			}
 	}
 
